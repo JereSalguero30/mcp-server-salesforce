@@ -50,14 +50,16 @@ const simplePromptToQuery = (prompt) => {
   return null;
 };
 
+const { generateSoqlFromPrompt } = require('./claude-soql');
+
 app.post('/query-natural', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
 
-  const query = simplePromptToQuery(prompt);
-  if (!query) return res.status(400).json({ error: 'No SOQL generated for prompt' });
-
   try {
+    const query = await generateSoqlFromPrompt(prompt);
+    console.log("🧠 Claude generó SOQL:", query);
+
     await conn.login(
       process.env.SALESFORCE_USERNAME,
       process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_TOKEN
