@@ -50,7 +50,7 @@ const simplePromptToQuery = (prompt) => {
   return null;
 };
 
-const { generateSoqlFromPrompt } = require('./claude-soql');
+const { generateSoqlFromPrompt } = require('./claude-soql.cjs');
 
 app.post('/query-natural', async (req, res) => {
   const prompt = req.body.prompt;
