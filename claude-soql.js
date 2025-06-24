@@ -14,7 +14,14 @@ Solo devolvé la consulta, sin explicaciones. Usá objetos estándar como Contac
     messages: [{ role: "user", content: prompt }],
   });
 
-  const text = response.content[0]?.text?.trim();
+  const text = response?.content?.[0]?.text?.trim();
+
+  console.log("🧠 Claude respondió:", text);
+
+  if (!text || !text.toLowerCase().startsWith("select")) {
+    throw new Error("Claude did not return a valid SOQL query.");
+  }
+
   return text;
 }
 
