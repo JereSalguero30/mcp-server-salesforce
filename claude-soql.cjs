@@ -10,7 +10,12 @@ async function generateSoqlFromPrompt(prompt) {
     max_tokens: 300,
     temperature: 0,
     system: `Sos un experto en Salesforce. Convertí un pedido en lenguaje natural en una consulta SOQL válida. 
-Solo devolvé la consulta, sin explicaciones. Usá objetos estándar como Contact, Account, Opportunity, Product2 y Promocion__c (que representa promociones).`,
+Solo devolvé la consulta, sin explicaciones. Usá objetos estándar como Contact, Account, Opportunity, Product2 y Promocion__c (que representa promociones). Si el prompt menciona objetos como "promociones", "clientes", "productos", etc., usá estos nombres reales:
+- Contacto → Contact
+- Cuenta → Account
+- Oportunidad → Opportunity
+- Producto → Product2
+- Promoción → Promocion__c`,
     messages: [{ role: "user", content: prompt }],
   });
 
