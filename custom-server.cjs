@@ -32,6 +32,7 @@ app.post('/contact-by-phone', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('✅ Custom Salesforce API listening on port 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Custom Salesforce API listening on port ${PORT}`);
 });
