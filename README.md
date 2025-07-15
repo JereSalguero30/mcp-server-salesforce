@@ -290,6 +290,13 @@ Examples with Field Level Security:
 "Configure log level to DEBUG for a user"
 ```
 
+### HTTP Endpoints
+
+The `custom-server.cjs` file exposes a minimal Express API that can be used in automation flows.
+
+- `POST /query-natural` genera una consulta SOQL a partir de un prompt en lenguaje natural y devuelve los registros.
+- `POST /prompt-query` funciona igual que el anterior pero acepta un campo `phone` para filtrar cuentas, contactos u oportunidades relacionadas con ese número de teléfono.
+
 ## Development
 
 ### Building from source
