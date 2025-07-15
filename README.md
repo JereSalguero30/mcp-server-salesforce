@@ -307,6 +307,17 @@ npm install
 npm run build
 ```
 
+### Running a local HTTP server
+
+A helper script `start-http.ts` is provided to start the MCP server via HTTP for local testing. After building, run:
+
+```bash
+node start-http.cjs
+```
+
+This starts the server on http://localhost:3000.
+
+
 ## Contributing
 Contributions are welcome! Feel free to submit a Pull Request.
 
