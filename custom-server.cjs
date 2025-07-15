@@ -52,6 +52,28 @@ const simplePromptToQuery = (prompt) => {
 
 const { generateSoqlFromPrompt } = require('./claude-soql.cjs');
 
+function addPhoneFilter(query, phone, contactId, accountId) {
+  const match = query.match(/from\s+(\w+)/i);
+  if (!match) return query;
+  const object = match[1].toLowerCase();
+
+  let condition = '';
+  if (object === 'contact' && contactId) {
+    condition = `Id = '${contactId}'`;
+  } else if (object === 'account' && accountId) {
+    condition = `Id = '${accountId}'`;
+  } else if (object === 'opportunity' && accountId) {
+    condition = `AccountId = '${accountId}'`;
+  } else {
+    return query;
+  }
+
+  if (/where/i.test(query)) {
+    return query.replace(/where/i, `WHERE ${condition} AND`);
+  }
+  return `${query} WHERE ${condition}`;
+}
+
 app.post('/query-natural', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
@@ -64,6 +86,51 @@ app.post('/query-natural', async (req, res) => {
       process.env.SALESFORCE_USERNAME,
       process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_TOKEN
     );
+
+    const result = await conn.query(query);
+    res.json(result.records);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/prompt-query', async (req, res) => {
+  const { prompt, phone } = req.body;
+  if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+
+  try {
+    let contactId = null;
+    let accountId = null;
+
+    if (phone) {
+      await conn.login(
+        process.env.SALESFORCE_USERNAME,
+        process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_TOKEN
+      );
+
+      const contactRes = await conn.query(
+        `SELECT Id, AccountId FROM Contact WHERE Phone = '${phone}' OR MobilePhone = '${phone}' LIMIT 1`
+      );
+      if (contactRes.records && contactRes.records.length > 0) {
+        contactId = contactRes.records[0].Id;
+        accountId = contactRes.records[0].AccountId;
+      }
+    }
+
+    let query = await generateSoqlFromPrompt(prompt);
+    console.log('🧠 Claude generó SOQL:', query);
+
+    if (phone && (contactId || accountId)) {
+      query = addPhoneFilter(query, phone, contactId, accountId);
+      console.log('🔎 Query con filtro de teléfono:', query);
+    }
+
+    if (!conn.accessToken) {
+      await conn.login(
+        process.env.SALESFORCE_USERNAME,
+        process.env.SALESFORCE_PASSWORD + process.env.SALESFORCE_TOKEN
+      );
+    }
 
     const result = await conn.query(query);
     res.json(result.records);
