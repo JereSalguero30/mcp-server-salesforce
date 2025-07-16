@@ -7,7 +7,7 @@ export interface HttpServerOptions {
 }
 
 export async function createHttpServer(options: HttpServerOptions = {}) {
-  const port = options.port ?? 3000;
+  const port = process.env.PORT || options.port || 3000;
   const app = express();
   app.use(express.json());
 

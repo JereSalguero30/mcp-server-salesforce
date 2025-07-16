@@ -27,6 +27,7 @@ import { WRITE_APEX_TRIGGER, handleWriteApexTrigger, WriteApexTriggerArgs } from
 import { EXECUTE_ANONYMOUS, handleExecuteAnonymous, ExecuteAnonymousArgs } from "./tools/executeAnonymous.js";
 import { MANAGE_DEBUG_LOGS, handleManageDebugLogs, ManageDebugLogsArgs } from "./tools/manageDebugLogs.js";
 
+
 dotenv.config();
 
 const server = new Server(
