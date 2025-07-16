@@ -317,6 +317,17 @@ node start-http.cjs
 
 This starts the server on http://localhost:3000.
 
+### Query endpoint
+
+Once the HTTP server is running you can send a POST request to `/query` with the
+SOQL parameters used by the `salesforce_query_records` tool:
+
+```bash
+curl -X POST http://localhost:3000/query \
+  -H "Content-Type: application/json" \
+  -d '{"objectName":"Account","fields":["Id","Name"],"limit":5}'
+```
+
 
 ## Contributing
 Contributions are welcome! Feel free to submit a Pull Request.

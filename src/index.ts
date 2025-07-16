@@ -18,6 +18,8 @@ import { MANAGE_OBJECT, handleManageObject, ManageObjectArgs } from "./tools/man
 import { MANAGE_FIELD, handleManageField, ManageFieldArgs } from "./tools/manageField.js";
 import { MANAGE_FIELD_PERMISSIONS, handleManageFieldPermissions, ManageFieldPermissionsArgs } from "./tools/manageFieldPermissions.js";
 import { SEARCH_ALL, handleSearchAll, SearchAllArgs, WithClause } from "./tools/searchAll.js";
+import { createHttpServer } from "./tools/http-server.js";
+import { fileURLToPath } from "url";
 import { READ_APEX, handleReadApex, ReadApexArgs } from "./tools/readApex.js";
 import { WRITE_APEX, handleWriteApex, WriteApexArgs } from "./tools/writeApex.js";
 import { READ_APEX_TRIGGER, handleReadApexTrigger, ReadApexTriggerArgs } from "./tools/readApexTrigger.js";
@@ -341,7 +343,11 @@ async function runServer() {
   console.error("Salesforce MCP Server running on stdio");
 }
 
-runServer().catch((error) => {
-  console.error("Fatal error running server:", error);
-  process.exit(1);
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  runServer().catch((error) => {
+    console.error("Fatal error running server:", error);
+    process.exit(1);
+  });
+}
+
+export { createHttpServer };
